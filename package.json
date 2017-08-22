@@ -1,0 +1,29 @@
+{
+  "name": "mean-stack",
+  "version": "1.0.0",
+  "description": "MEAN Stack - Angular2 & NodeJS",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onepelaez/mean-stack-project.git"
+  },
+  "keywords": [
+    "MEAN",
+    "Stack",
+    "Angular2",
+    "Application"
+  ],
+  "author": "OnePelaez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/onepelaez/mean-stack-project/issues"
+  },
+  "homepage": "https://github.com/onepelaez/mean-stack-project#readme",
+  "dependencies": {
+    "express": "^4.15.4",
+    "mongoose": "^4.11.7"
+  }
+}
