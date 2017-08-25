@@ -1,0 +1,71 @@
+<h1 class="page-header">Register Page</h1>
+
+<div class="row show-hide-message">
+    <div [ngClass]="messageClass">
+        {{ message }}
+    </div>
+</div>
+
+<form [formGroup]="form" (submit)="onRegisterSubmit()">
+    <div class="form-group">
+        <label for="username">Nombre de Usuario</label>
+        <div [ngClass]="{'has-error': (form.controls.username.errors && form.controls.username.dirty), 
+        'has-success': !form.controls.username.errors}">
+            <input type="text" name="username" class="form-control" autocomplete="off" placeholder="*Nombre de Usuario" formControlName="username"/>
+            <ul class="help-block">
+                <li *ngIf="form.controls.username.errors?.required && form.controls.username.dirty">Nombre de Usuario es requerido</li>
+                <li *ngIf="(form.controls.username.errors?.minlenght || form.controls.username.errors?.maxlength) 
+                && form.controls.username.dirty">
+                    Minimo de caracteres: 3, Maximo de Caracteres: 20
+                </li>
+                <li *ngIf="form.controls.username.errors?.validateUsername &&
+                form.controls.username.dirty">Debe ingresar un nombre de usuario valido</li>
+            </ul>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="email">Correo Electronico</label>
+        <div [ngClass]="{'has-error': (form.controls.email.errors && form.controls.email.dirty), 
+        'has-success': !form.controls.email.errors}">
+            <input type="email" name="email" class="form-control" autocomplete="off" placeholder="*Correo Electronico" formControlName="email" />
+            <ul class="help-block">
+                <li *ngIf="form.controls.email.errors?.required && form.controls.email.dirty">Correo Electronico es requerido</li>
+                <li *ngIf="(form.controls.email.errors?.minlenght || form.controls.email.errors?.maxlength)
+                && form.controls.email.dirty">
+                    Minimo de caracteres: 5, Maximo de Caracteres: 30
+                </li>
+                <li *ngIf="form.controls.email.errors?.validateEmail &&
+                form.controls.email.dirty">Debe ingresar un correo electronico valido</li>
+            </ul>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="password">Clave de Acceso</label>
+        <div [ngClass]="{'has-error': (form.controls.password.errors && form.controls.password.dirty), 
+        'has-success': !form.controls.password.errors}">
+            <input type="password" name="password" class="form-control" autocomplete="off" placeholder="*Clave de Acceso" formControlName="password"/>
+            <ul class="help-block">
+                <li *ngIf="form.controls.password.errors?.required && form.controls.password.dirty">Clave de acceso es requerida</li>
+            <li *ngIf="form.controls.password.errors?.minlenght || form.controls.password.errors?.maxlength">
+                Minimo de caracteres: 8, Maximo de Caracteres: 35
+            </li>
+            <li *ngIf="form.controls.password.errors?.validatePassword &&
+            form.controls.password.dirty">Clave de acceso debe tener al menos 8 caracteres pero no mas de 35</li>
+            </ul>
+        </div>
+    </div>
+    <div class="form-group">
+            <label for="confirm">Confirmar Clave de Acceso</label>
+            <div [ngClass]="{'has-error': (form.controls.confirm.errors && form.controls.confirm.dirty) ||
+            (form.errors?.matchingPasswords && form.controls.confirm.dirty), 
+            'has-success': !form.controls.confirm.errors && !form.errors?.matchingPasswords}">
+                <input type="password" name="confirm" class="form-control" autocomplete="off" placeholder="*Clave de Acceso nuevamente" formControlName="confirm"/>
+                <ul class="help-block">
+                    <li *ngIf="form.controls.confirm.errors?.required && form.controls.confirm.dirty">Confirmacion de clave de acceso es requerida</li>
+                    <li *ngIf="form.errors?.matchingPasswords && form.controls.confirm.dirty">Clave de acceso no concuerda</li>
+                </ul>
+            </div>
+        </div>
+    <input [disabled]="!form.valid || processing" type="submit" class="btn btn-primary" value="Registrar">
+</form>
+
