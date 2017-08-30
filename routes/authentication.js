@@ -1,4 +1,6 @@
 const User = require('../models/user');
+const jwt = require('jsonwebtoken');
+const config = require('../config/database');
 
 module.exports = (router) => {
 
@@ -63,6 +65,103 @@ module.exports = (router) => {
             }
         }
     });
+
+    router.get('/checkEmail/:email', (req, res) => {
+        if (!req.params.email) {
+            res.json({ success: false, message: 'Correo electronico faltante'});
+        } else {
+            User.findOne({ email: req.params.email}, (err, user) => {
+                if (err) {
+                    res.json({ success: false, message: err});
+                } else {
+                    if (user) {
+                        res.json({ success: false, message: 'Correo electronico inscrito previamente'});
+                    } else {
+                        res.json({ success: true, message: 'Correo electronico disponible'});
+                    }
+                }
+            });
+        }
+    });
+
+    router.get('/checkUsername/:username', (req, res) => {
+        if (!req.params.username) {
+            res.json({ success: false, message: 'Nombre de usuario faltante'});
+        } else {
+            User.findOne({ username: req.params.username}, (err, user) => {
+                if (err) {
+                    res.json({ success: false, message: err});
+                } else {
+                    if (user) {
+                        res.json({ success: false, message: 'Nombre de Usuario inscrito previamente'});
+                    } else {
+                        res.json({ success: true, message: 'Nombre de usuario disponible'});
+                    }
+                }
+            });
+        }
+    });
+
+    router.post('/login', (req, res) => {
+        if (!req.body.username) {
+            res.json({ success: false, message: 'No ha digitado el nombre de usuario'});
+        } else {
+            if (!req.body.password) {
+                res.json({ success:false, message: 'No ha digitado la clave de acceso'});
+            } else {
+                User.findOne({ username: req.body.username.toLowerCase() }, (err, user) => {
+                    if (err) {
+                        res.json({ success: false, message: err});
+                    } else {
+                        if (!user) {
+                            res.json({ success: false, message: 'Nombre de Usuario no encontrado'});
+                        } else {
+                            const validPassword = user.comparePassword(req.body.password);
+                            if (!validPassword) {
+                                res.json({ success: false, message: 'Clave de acceso invalida'});
+                            } else {
+                                const token = jwt.sign({ userId: user._id }, config.secret, { expiresIn: '24h' });
+                                res.json({ success: true, message: 'Acceso Exitoso!', token: token, user: { username: user.username } });
+                            }
+                        }
+                    }
+                });
+            }
+        }        
+    });
+
+    //Middleware for profile page
+    router.use((req, res, next) => {
+        const token = req.headers['authorization'];
+        if (!token) {
+            res.json({ success: false, message: 'Token no ha sido provisto' });
+        } else {
+            jwt.verify(token, config.secret, (err, decoded) => {
+                if (err) {
+                    res.json({ success: false, message: 'Token invalid: ' + err });
+                } else {
+                    req.decoded = decoded;
+                    next();
+                }
+            });
+        }
+    });
+
+    router.get('/profile', (req,res) => {
+        User.findOne({ _id: req.decoded.userId }).select('username email').exec((err, user) => {
+            if (err) {
+                res.json({ success: false, message: err });
+            } else {
+                if (!user) {
+                    res.json({ success: false, message: 'Usuario no encontrado' });
+                } else {
+                    res.json({ success: true, user: user });
+                }
+            }
+        });
+    });
+
+
     return router;
 
 }

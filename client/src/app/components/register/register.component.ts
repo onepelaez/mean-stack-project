@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -13,10 +14,15 @@ export class RegisterComponent implements OnInit {
   message;
   messageClass;
   processing = false;
+  emailValid;
+  emailMessage;
+  usernameValid;
+  usernameMessage;
   
   constructor(
     private formBuilder: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) { 
     this.createForm()
   }
@@ -117,10 +123,40 @@ export class RegisterComponent implements OnInit {
       } else {
         this.messageClass = 'alert alert-success';
         this.message = data.message;
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 2000)
       }
     });
 
   }
+
+  checkEmail () {
+    const email = this.form.get('email').value;
+    this.authService.checkEmail(email).subscribe(data => {
+      if (!data.success) {
+        this.emailValid = false;
+        this.emailMessage = data.message;
+      } else {
+        this.emailValid = true;
+        this.emailMessage = data.message;
+      }
+    });
+  }
+
+  checkUsername () {
+    const username = this.form.get('username').value;
+    this.authService.checkUsername(username).subscribe(data => {
+      if (!data.success) {
+        this.usernameValid = false;
+        this.usernameMessage = data.message;
+      } else {
+        this.usernameValid = true;
+        this.usernameMessage = data.message;
+      }
+    });
+  }
+
 
   ngOnInit() {
   }

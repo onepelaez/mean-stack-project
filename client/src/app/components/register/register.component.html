@@ -9,9 +9,10 @@
 <form [formGroup]="form" (submit)="onRegisterSubmit()">
     <div class="form-group">
         <label for="username">Nombre de Usuario</label>
-        <div [ngClass]="{'has-error': (form.controls.username.errors && form.controls.username.dirty), 
-        'has-success': !form.controls.username.errors}">
-            <input type="text" name="username" class="form-control" autocomplete="off" placeholder="*Nombre de Usuario" formControlName="username"/>
+        <div [ngClass]="{'has-error': (form.controls.username.errors && form.controls.username.dirty) || (!usernameValid
+        && form.controls.username.dirty), 'has-success': !form.controls.username.errors && usernameValid}">
+            <input type="text" name="username" class="form-control" autocomplete="off" placeholder="*Nombre de Usuario" 
+            formControlName="username" (blur)="checkUsername()"/>
             <ul class="help-block">
                 <li *ngIf="form.controls.username.errors?.required && form.controls.username.dirty">Nombre de Usuario es requerido</li>
                 <li *ngIf="(form.controls.username.errors?.minlenght || form.controls.username.errors?.maxlength) 
@@ -20,14 +21,17 @@
                 </li>
                 <li *ngIf="form.controls.username.errors?.validateUsername &&
                 form.controls.username.dirty">Debe ingresar un nombre de usuario valido</li>
+                <li *ngIf="usernameMessage">{{ usernameMessage }}</li>
             </ul>
         </div>
     </div>
+
     <div class="form-group">
         <label for="email">Correo Electronico</label>
-        <div [ngClass]="{'has-error': (form.controls.email.errors && form.controls.email.dirty), 
-        'has-success': !form.controls.email.errors}">
-            <input type="email" name="email" class="form-control" autocomplete="off" placeholder="*Correo Electronico" formControlName="email" />
+        <div [ngClass]="{'has-error': (form.controls.email.errors && form.controls.email.dirty) || (!emailValid &&
+        form.controls.email.dirty), 'has-success': !form.controls.email.errors && emailValid}">
+            <input type="email" name="email" class="form-control" autocomplete="off" placeholder="*Correo Electronico" 
+            formControlName="email" (blur)="checkEmail()" />
             <ul class="help-block">
                 <li *ngIf="form.controls.email.errors?.required && form.controls.email.dirty">Correo Electronico es requerido</li>
                 <li *ngIf="(form.controls.email.errors?.minlenght || form.controls.email.errors?.maxlength)
@@ -36,9 +40,11 @@
                 </li>
                 <li *ngIf="form.controls.email.errors?.validateEmail &&
                 form.controls.email.dirty">Debe ingresar un correo electronico valido</li>
+                <li *ngIf="emailMessage">{{ emailMessage }}</li>
             </ul>
         </div>
     </div>
+
     <div class="form-group">
         <label for="password">Clave de Acceso</label>
         <div [ngClass]="{'has-error': (form.controls.password.errors && form.controls.password.dirty), 
@@ -54,18 +60,21 @@
             </ul>
         </div>
     </div>
+
     <div class="form-group">
-            <label for="confirm">Confirmar Clave de Acceso</label>
-            <div [ngClass]="{'has-error': (form.controls.confirm.errors && form.controls.confirm.dirty) ||
-            (form.errors?.matchingPasswords && form.controls.confirm.dirty), 
-            'has-success': !form.controls.confirm.errors && !form.errors?.matchingPasswords}">
-                <input type="password" name="confirm" class="form-control" autocomplete="off" placeholder="*Clave de Acceso nuevamente" formControlName="confirm"/>
-                <ul class="help-block">
-                    <li *ngIf="form.controls.confirm.errors?.required && form.controls.confirm.dirty">Confirmacion de clave de acceso es requerida</li>
-                    <li *ngIf="form.errors?.matchingPasswords && form.controls.confirm.dirty">Clave de acceso no concuerda</li>
-                </ul>
-            </div>
+        <label for="confirm">Confirmar Clave de Acceso</label>
+        <div [ngClass]="{'has-error': (form.controls.confirm.errors && form.controls.confirm.dirty) ||
+        (form.errors?.matchingPasswords && form.controls.confirm.dirty), 
+        'has-success': !form.controls.confirm.errors && !form.errors?.matchingPasswords}">
+            <input type="password" name="confirm" class="form-control" autocomplete="off" placeholder="*Clave de Acceso nuevamente" formControlName="confirm"/>
+            <ul class="help-block">
+                <li *ngIf="form.controls.confirm.errors?.required && form.controls.confirm.dirty">Confirmacion de clave de acceso es requerida</li>
+                <li *ngIf="form.errors?.matchingPasswords && form.controls.confirm.dirty">Clave de acceso no concuerda</li>
+            </ul>
         </div>
-    <input [disabled]="!form.valid || processing" type="submit" class="btn btn-primary" value="Registrar">
+    </div>
+
+    <input [disabled]="!form.valid || processing || !emailValid || !usernameValid" type="submit" class="btn btn-primary" value="Registrar">
+
 </form>
 
